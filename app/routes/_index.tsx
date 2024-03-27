@@ -1,10 +1,9 @@
 import SetTimes from "components/SetTimes";
-import ViewSessions from "components/ViewSessions";
+import TimerDisplay from "components/TimerDisplay";
 import { useSession } from "layouts/SessionContext";
 import { useTime } from "layouts/TimeContext";
-import { useEffect, useState } from "react";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
+import { useEffect, useRef, useState } from "react";
+import alarm from "public/alarm.mp3"
 
 const Home = () => {
   const links = [
@@ -30,7 +29,9 @@ const Home = () => {
   const [totalSeconds, setTotalSeconds] = useState(minutes * 60 + seconds);
   const [timerRunning, setTimerRunning] = useState(false);
   const [percentage, setPercentage] = useState(0);
-  const { sessions, setSessions, addSession } = useSession()
+  const [playing, setPlaying] = useState(false);
+  const { sessions, setSessions, addSession } = useSession();
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     console.log("Timer running status:", timerRunning);
@@ -43,8 +44,8 @@ const Home = () => {
           clearInterval(timerInterval);
           setTimerRunning(false);
 
-          // const audio = new Audio("/sounds/alarm.mp3");
-          // audio.play();
+          audioRef?.current?.play();
+          setPlaying(true);
 
           saveSession();
         }
@@ -119,8 +120,8 @@ const Home = () => {
     const remainingSeconds = totalSeconds;
     const sessionData = {
       startTime: new Date().toISOString(),
-      duration: activeTime * 60 - remainingSeconds, // Calculate remaining duration
-      status: "Incomplete", // Session is incomplete if timer is reset
+      duration: activeTime * 60 - remainingSeconds,
+      status: "Incomplete"
     };
 
     addSession(sessionData);
@@ -149,8 +150,8 @@ const Home = () => {
   const saveSession = () => {
     const sessionData = {
       startTime: new Date().toISOString(),
-      duration: activeTime * 60 - totalSeconds, // duration in seconds
-      status: "completed",
+      duration: activeTime * 60, 
+      status: "Complete",
     };
 
     const updatedSessions = [...sessions, sessionData];
@@ -158,12 +159,19 @@ const Home = () => {
     loadSessions();
   };
 
+  const handleStopPlaying = () => {
+    audioRef?.current?.pause();
+    setPlaying(false);
+  }
+
   return (
-    <div className="bg-slate-900 w-screen h-screen flex flex-col items-center">
+
+    <div className="bg-slate-900 w-screen h-screen flex flex-col items-center overflow-x-hidden">
+      <audio ref={audioRef} src={alarm} />
       <h1 className="text-white p-10 text-6xl font-medium">
         Time<span className="text-fuchsia-500">Slice</span>
       </h1>
-      <div className="w-full bg-slate-900 flex flex-col gap-10 items-center h-full">
+      <div className="w-full bg-slate-900 flex flex-col gap-10 items-center h-fit">
         <div className="w-full md:w-3/5 lg:w-2/5 xl:w-1/3 h-20 flex justify-center">
           <div className="w-full pl-3 pr-3 pt-3 pb-3 bg-slate-700 rounded-full flex justify-around">
             {links.map((link, index) => (
@@ -172,7 +180,7 @@ const Home = () => {
                 key={index}
                 className={`w-1/3 text-white text-2xl font-medium hover:cursor-pointer flex p-3 justify-center items-center ${
                   activeLink === link.name
-                    ? "bg-slate-500 text-fuchsia-400"
+                    ? "bg-fuchsia-500"
                     : ""
                 } rounded-full flex justify-center`}
                 onClick={() => handleSetLink(link.name)}
@@ -182,61 +190,22 @@ const Home = () => {
             ))}
           </div>
         </div>
-        <div className="w-full h-full flex justify-center bg-slate-900">
-          <div className="w-80">
-            <CircularProgressbar
-              value={percentage}
-              text={`${minutes.toString().padStart(2, "0")}:${seconds
-                .toString()
-                .padStart(2, "0")}`}
-              strokeWidth={4}
-              styles={buildStyles({
-                pathTransitionDuration: 0.95,
-                textColor: "fuchsia",
-                pathColor: "fuchsia",
-                trailColor: "white",
-              })}
-            />
-            <div className="flex flex-row justify-center mt-3 gap-5 bg-slate-900 w-full">
-              {!timerRunning ? (
-                <button
-                  className="bg-red-500 p-3 rounded-lg text-white font-medium"
-                  onClick={startTimer}
-                >
-                  Start
-                </button>
-              ) : (
-                <button
-                  className="bg-red-500 p-3 rounded-lg text-white font-medium"
-                  onClick={stopTimer}
-                >
-                  Stop
-                </button>
-              )}
-              <button
-                className="bg-red-500 p-3 rounded-lg text-white font-medium"
-                onClick={resetTimer}
-              >
-                Reset
-              </button>
-            </div>
-          </div>
+        <div className="w-full h-fit flex justify-center bg-slate-900">
+          <TimerDisplay
+            playing={playing}
+            onHandlePlaying={handleStopPlaying}
+            percentage={percentage}
+            resetTimer={resetTimer}
+            startTimer={startTimer}
+            stopTimer={stopTimer}
+            timerRunning={timerRunning}
+            minutes={minutes}
+            seconds={seconds}
+          />
         </div>
-        <div className="mt-auto pb-5 w-full bg-slate-900 flex justify-center">
+        <div className="w-full bg-slate-900 flex justify-center">
           <SetTimes />
         </div>
-        {/* <div className="w-full max-w-md bg-white rounded-md p-4">
-          <h2 className="text-lg font-semibold mb-2">Sessions</h2>
-          <ul>
-            {sessions.map((session, index) => (
-              <li key={index}>
-                <p>Start Time: {session.startTime}</p>
-                <p>Duration: {session.duration} seconds</p>
-                <p>Status: {session.status}</p>
-              </li>
-            ))}
-          </ul>
-        </div> */}
       </div>
     </div>
   );

@@ -8,7 +8,6 @@ import {
 } from "./ui/dialog";
 import { useEffect, useRef, useState } from "react";
 import { useTime } from "layouts/TimeContext";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
 import TimerForm from "./TimerForm";
 import ViewSessions from "./ViewSessions";
 
@@ -64,7 +63,7 @@ const SetTimes = () => {
   return (
     <div className="overflow-hidden">
       <Dialog>
-        <DialogTrigger className="hover:rotate-180 hover:scale-125 duration-150 p-3 ease-in-out">
+        <DialogTrigger className="hover:rotate-180 mt-10 hover:scale-125 duration-150 p-3 ease-in-out">
           <Settings color="#ffffff" width={70} height={70} />
         </DialogTrigger>
         <DialogContent>
