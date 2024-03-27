@@ -7,6 +7,7 @@ import {
 } from "@remix-run/react";
 import "../styles/globals.css";
 import { TimeProvider } from "layouts/TimeContext";
+import { SessionProvider } from "layouts/SessionContext";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -18,7 +19,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <TimeProvider>{children}</TimeProvider>
+        <SessionProvider>
+          <TimeProvider>{children}</TimeProvider>
+        </SessionProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

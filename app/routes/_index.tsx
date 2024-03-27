@@ -1,4 +1,6 @@
 import SetTimes from "components/SetTimes";
+import ViewSessions from "components/ViewSessions";
+import { useSession } from "layouts/SessionContext";
 import { useTime } from "layouts/TimeContext";
 import { useEffect, useState } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
@@ -21,13 +23,14 @@ const Home = () => {
   ];
 
   const [activeLink, setActiveLink] = useState(links[0].name);
-  const { times, updateTimes } = useTime();
+  const { times } = useTime();
   const [activeTime, setActiveTime] = useState<number>(times.timer);
   const [minutes, setMinutes] = useState(activeTime);
   const [seconds, setSeconds] = useState(0);
   const [totalSeconds, setTotalSeconds] = useState(minutes * 60 + seconds);
   const [timerRunning, setTimerRunning] = useState(false);
   const [percentage, setPercentage] = useState(0);
+  const { sessions, setSessions, addSession } = useSession()
 
   useEffect(() => {
     console.log("Timer running status:", timerRunning);
@@ -39,12 +42,21 @@ const Home = () => {
         } else {
           clearInterval(timerInterval);
           setTimerRunning(false);
+
+          // const audio = new Audio("/sounds/alarm.mp3");
+          // audio.play();
+
+          saveSession();
         }
       }, 1000);
 
       return () => clearInterval(timerInterval);
     }
   }, [timerRunning, totalSeconds]);
+
+  useEffect(() => {
+    loadSessions();
+  }, []);
 
   useEffect(() => {
     const newMinutes = Math.floor(totalSeconds / 60);
@@ -104,11 +116,46 @@ const Home = () => {
   };
 
   const resetTimer = () => {
+    const remainingSeconds = totalSeconds;
+    const sessionData = {
+      startTime: new Date().toISOString(),
+      duration: activeTime * 60 - remainingSeconds, // Calculate remaining duration
+      status: "Incomplete", // Session is incomplete if timer is reset
+    };
+
+    addSession(sessionData);
+    const updatedSessions = [...sessions, sessionData];
+    localStorage.setItem("sessions", JSON.stringify(updatedSessions));
+
     setMinutes(activeTime);
     setSeconds(0);
     setTotalSeconds(minutes * 60 + seconds);
     setTimerRunning(false);
     console.log("reset", minutes, seconds, totalSeconds);
+  };
+
+  const loadSessions = () => {
+    const sessionsFromLocalStorage = localStorage.getItem("sessions");
+    if (sessionsFromLocalStorage) {
+      try {
+        const parsedSessions = JSON.parse(sessionsFromLocalStorage);
+        setSessions(parsedSessions);
+      } catch (error) {
+        console.error("Error parsing sessions from localStorage:", error);
+      }
+    }
+  };
+
+  const saveSession = () => {
+    const sessionData = {
+      startTime: new Date().toISOString(),
+      duration: activeTime * 60 - totalSeconds, // duration in seconds
+      status: "completed",
+    };
+
+    const updatedSessions = [...sessions, sessionData];
+    localStorage.setItem("sessions", JSON.stringify(updatedSessions));
+    loadSessions();
   };
 
   return (
@@ -120,7 +167,8 @@ const Home = () => {
         <div className="w-full md:w-3/5 lg:w-2/5 xl:w-1/3 h-20 flex justify-center">
           <div className="w-full pl-3 pr-3 pt-3 pb-3 bg-slate-700 rounded-full flex justify-around">
             {links.map((link, index) => (
-              <div
+              <button
+                disabled={timerRunning}
                 key={index}
                 className={`w-1/3 text-white text-2xl font-medium hover:cursor-pointer flex p-3 justify-center items-center ${
                   activeLink === link.name
@@ -130,7 +178,7 @@ const Home = () => {
                 onClick={() => handleSetLink(link.name)}
               >
                 {link.name}
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -141,25 +189,30 @@ const Home = () => {
               text={`${minutes.toString().padStart(2, "0")}:${seconds
                 .toString()
                 .padStart(2, "0")}`}
+              strokeWidth={4}
               styles={buildStyles({
+                pathTransitionDuration: 0.95,
                 textColor: "fuchsia",
                 pathColor: "fuchsia",
                 trailColor: "white",
               })}
             />
             <div className="flex flex-row justify-center mt-3 gap-5 bg-slate-900 w-full">
-              <button
-                className="bg-red-500 p-3 rounded-lg text-white font-medium"
-                onClick={startTimer}
-              >
-                Start
-              </button>
-              <button
-                className="bg-red-500 p-3 rounded-lg text-white font-medium"
-                onClick={stopTimer}
-              >
-                Stop
-              </button>
+              {!timerRunning ? (
+                <button
+                  className="bg-red-500 p-3 rounded-lg text-white font-medium"
+                  onClick={startTimer}
+                >
+                  Start
+                </button>
+              ) : (
+                <button
+                  className="bg-red-500 p-3 rounded-lg text-white font-medium"
+                  onClick={stopTimer}
+                >
+                  Stop
+                </button>
+              )}
               <button
                 className="bg-red-500 p-3 rounded-lg text-white font-medium"
                 onClick={resetTimer}
@@ -172,6 +225,18 @@ const Home = () => {
         <div className="mt-auto pb-5 w-full bg-slate-900 flex justify-center">
           <SetTimes />
         </div>
+        {/* <div className="w-full max-w-md bg-white rounded-md p-4">
+          <h2 className="text-lg font-semibold mb-2">Sessions</h2>
+          <ul>
+            {sessions.map((session, index) => (
+              <li key={index}>
+                <p>Start Time: {session.startTime}</p>
+                <p>Duration: {session.duration} seconds</p>
+                <p>Status: {session.status}</p>
+              </li>
+            ))}
+          </ul>
+        </div> */}
       </div>
     </div>
   );

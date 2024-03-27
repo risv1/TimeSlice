@@ -9,6 +9,8 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useTime } from "layouts/TimeContext";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
+import TimerForm from "./TimerForm";
+import ViewSessions from "./ViewSessions";
 
 const SetTimes = () => {
   const [tempTimes, setTempTimes] = useState({
@@ -16,6 +18,7 @@ const SetTimes = () => {
     sbreak: 3,
     lbreak: 15,
   });
+  const [seeForm, setSeeForm] = useState(true);
   const { updateTimes } = useTime();
 
   const timeRef = useRef<HTMLInputElement>(null);
@@ -54,10 +57,14 @@ const SetTimes = () => {
     });
   };
 
+  const handleSeeForm = () => {
+    setSeeForm(!seeForm);
+  }
+
   return (
     <div className="overflow-hidden">
       <Dialog>
-        <DialogTrigger className="hover:rotate-180 duration-150 ease-in-out">
+        <DialogTrigger className="hover:rotate-180 hover:scale-125 duration-150 p-3 ease-in-out">
           <Settings color="#ffffff" width={70} height={70} />
         </DialogTrigger>
         <DialogContent>
@@ -65,66 +72,27 @@ const SetTimes = () => {
             <DialogTitle className="text-black font-semibold text-3xl border-b pb-3 border-gray-500">
               Settings
             </DialogTitle>
+            <div className="w-full flex justify-evenly p-3 flex-row">
+              <button onClick={handleSeeForm} className="font-medium text-xl hover:underline underline-offset-2 duration-150 ease-in-out decoration-black" >Timer Settings</button>
+              <button onClick={handleSeeForm} className="font-medium text-xl hover:underline underline-offset-2 duration-150 ease-in-out decoration-black" >Sessions</button>
+            </div>
             <div>
-              <div className="w-full h-full">
-                <div className="text-black font-normal text-xl tracking-widest pt-2">
-                  TIME (MINUTES)
+              {seeForm ? (
+                <div className="w-full h-full">
+                  <TimerForm
+                    onHandleChange={handleChange}
+                    onHandleSubmit={handleSubmit}
+                    thisLbreakRef={lbreakRef}
+                    thisSbreakRef={sbreakRef}
+                    thisTimeRef={timeRef}
+                    thisTempTimes={tempTimes}
+                  />
                 </div>
-                <div className="flex flex-row pt-2">
-                  <form onSubmit={handleSubmit} className="flex flex-col">
-                    <div className="flex flex-row items-center mb-4">
-                      <label htmlFor="timer" className="text-lg mr-2">
-                        Timer:
-                      </label>
-                      <input
-                        type="number"
-                        id="timer"
-                        name="timer"
-                        className="border rounded px-2 py-1 bg-gray-300"
-                        ref={timeRef}
-                        onChange={handleChange}
-                        value={tempTimes.timer}
-                      />
-                    </div>
-                    <div className="flex flex-row items-center mb-4">
-                      <label htmlFor="sbreak" className="text-lg mr-2">
-                        Short Break:
-                      </label>
-                      <input
-                        type="number"
-                        id="sbreak"
-                        name="sbreak"
-                        className="border rounded px-2 py-1 bg-gray-300"
-                        ref={sbreakRef}
-                        onChange={handleChange}
-                        value={tempTimes.sbreak}
-                      />
-                    </div>
-                    <div className="flex flex-row items-center mb-4">
-                      <label htmlFor="lbreak" className="text-lg mr-2">
-                        Long Break:
-                      </label>
-                      <input
-                        type="number"
-                        id="lbreak"
-                        name="lbreak"
-                        className="border rounded px-2 py-1 bg-gray-300"
-                        ref={lbreakRef}
-                        onChange={handleChange}
-                        value={tempTimes.lbreak}
-                      />
-                    </div>
-                    <DialogPrimitive.Close>
-                      <button
-                        type="submit"
-                        className="bg-blue-500 text-white font-semibold py-2 px-4 rounded"
-                      >
-                        Submit
-                      </button>
-                    </DialogPrimitive.Close>
-                  </form>
+              ) : (
+                <div className="w-full h-full">
+                  <ViewSessions />
                 </div>
-              </div>
+              )}
             </div>
           </DialogHeader>
         </DialogContent>
