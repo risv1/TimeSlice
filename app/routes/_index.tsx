@@ -49,8 +49,6 @@ const Home = () => {
           setPlaying(true);
 
           toast("Times up!")
-
-          saveSession();
         }
       }, 1000);
 
@@ -126,6 +124,9 @@ const Home = () => {
       duration: activeTime * 60 - remainingSeconds,
       status: "Incomplete"
     };
+    if(sessionData.duration === activeTime * 60){
+      sessionData.status = "Complete"
+    }
     if(sessionData.duration !== 0){
       addSession(sessionData);
       const updatedSessions = [...sessions, sessionData];
@@ -153,18 +154,6 @@ const Home = () => {
         console.error("Error parsing sessions from localStorage:", error);
       }
     }
-  };
-
-  const saveSession = () => {
-    const sessionData = {
-      startTime: new Date().toISOString().toLocaleString(),
-      duration: activeTime * 60, 
-      status: "Complete",
-    };
-
-    const updatedSessions = [...sessions, sessionData];
-    localStorage.setItem("sessions", JSON.stringify(updatedSessions));
-    loadSessions();
   };
 
   const handleStopPlaying = () => {
