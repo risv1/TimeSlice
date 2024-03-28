@@ -48,7 +48,7 @@ const Home = () => {
           audioRef?.current?.play();
           setPlaying(true);
 
-          toast("Times up!.")
+          toast("Times up!")
 
           saveSession();
         }
@@ -60,7 +60,7 @@ const Home = () => {
 
   useEffect(() => {
     loadSessions();
-  }, [sessions]);
+  }, []);
 
   useEffect(() => {
     const newMinutes = Math.floor(totalSeconds / 60);
@@ -126,16 +126,21 @@ const Home = () => {
       duration: activeTime * 60 - remainingSeconds,
       status: "Incomplete"
     };
+    if(sessionData.duration !== 0){
+      addSession(sessionData);
+      const updatedSessions = [...sessions, sessionData];
+      localStorage.setItem("sessions", JSON.stringify(updatedSessions));
+  
+      setMinutes(activeTime);
+      setSeconds(0);
+      setTotalSeconds(minutes * 60 + seconds);
+      setTimerRunning(false);
+      console.log("reset", minutes, seconds, totalSeconds);
+      toast("Session saved!")
+    }else{
+      return;
+    }
 
-    addSession(sessionData);
-    const updatedSessions = [...sessions, sessionData];
-    localStorage.setItem("sessions", JSON.stringify(updatedSessions));
-
-    setMinutes(activeTime);
-    setSeconds(0);
-    setTotalSeconds(minutes * 60 + seconds);
-    setTimerRunning(false);
-    console.log("reset", minutes, seconds, totalSeconds);
   };
 
   const loadSessions = () => {
@@ -179,7 +184,7 @@ const Home = () => {
           <div className="w-full pl-3 pr-3 pt-3 pb-3 bg-slate-700 rounded-full flex justify-around">
             {links.map((link, index) => (
               <button
-                disabled={timerRunning}
+                disabled={timerRunning ||  percentage !==100}
                 key={index}
                 className={`w-1/3 text-white text-2xl font-medium hover:cursor-pointer flex p-3 justify-center items-center ${
                   activeLink === link.name

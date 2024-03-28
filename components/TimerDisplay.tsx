@@ -64,7 +64,7 @@ const TimerDisplay = (props: TimerDisplayProps) => {
       </div>
       <div className="flex flex-row justify-center mt-3 gap-5 bg-slate-900 w-full">
         <button
-          className="text-slate-400 p-1 tracking-widest font-medium text-xl"
+          className={`p-1 tracking-widest font-medium text-xl ${props.percentage!==100 || props.timerRunning ? "text-fuchsia-500" : "text-slate-400"}`}
           onClick={props.resetTimer}
         >
           RESET
