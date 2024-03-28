@@ -8,6 +8,7 @@ import {
 import "../styles/globals.css";
 import { TimeProvider } from "layouts/TimeContext";
 import { SessionProvider } from "layouts/SessionContext";
+import { Toaster } from "components/ui/sonner"
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -24,6 +25,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </SessionProvider>
         <ScrollRestoration />
         <Scripts />
+        <Toaster />
       </body>
     </html>
   );

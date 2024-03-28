@@ -4,6 +4,7 @@ import { useSession } from "layouts/SessionContext";
 import { useTime } from "layouts/TimeContext";
 import { useEffect, useRef, useState } from "react";
 import alarm from "public/alarm.mp3"
+import { toast } from "sonner"
 
 const Home = () => {
   const links = [
@@ -46,6 +47,8 @@ const Home = () => {
 
           audioRef?.current?.play();
           setPlaying(true);
+
+          toast("Times up!.")
 
           saveSession();
         }

@@ -56,24 +56,20 @@ const SetTimes = () => {
     });
   };
 
-  const handleSeeForm = () => {
-    setSeeForm(!seeForm);
-  }
-
   return (
     <div className="overflow-hidden">
       <Dialog>
         <DialogTrigger className="hover:rotate-180 mt-10 hover:scale-125 duration-150 p-3 ease-in-out">
           <Settings color="#ffffff" width={70} height={70} />
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="bg-slate-800 text-white border-none">
           <DialogHeader>
-            <DialogTitle className="text-black font-semibold text-3xl border-b pb-3 border-gray-500">
+            <DialogTitle className="text-fuchsia-500 font-semibold text-3xl border-b pb-3 border-gray-500">
               Settings
             </DialogTitle>
             <div className="w-full flex justify-evenly p-3 flex-row">
-              <button onClick={handleSeeForm} className="font-medium text-xl hover:underline underline-offset-2 duration-150 ease-in-out decoration-black" >Timer Settings</button>
-              <button onClick={handleSeeForm} className="font-medium text-xl hover:underline underline-offset-2 duration-150 ease-in-out decoration-black" >Sessions</button>
+              <button onClick={()=>setSeeForm(true)} className="font-medium text-xl hover:underline underline-offset-2 duration-150 ease-in-out decoration-white" >Timer Settings</button>
+              <button onClick={()=>setSeeForm(false)} className="font-medium text-xl hover:underline underline-offset-2 duration-150 ease-in-out decoration-white" >Sessions</button>
             </div>
             <div>
               {seeForm ? (
