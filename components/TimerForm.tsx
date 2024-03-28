@@ -12,6 +12,7 @@ type TimerFormProps = {
     thisLbreakRef: React.RefObject<HTMLInputElement>;
     onHandleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onHandleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    timerRunning: boolean
 };
 
 
@@ -68,7 +69,8 @@ const TimerForm: FC<TimerFormProps> = (props: TimerFormProps) => {
                     <Close>
                       <button
                         type="submit"
-                        className="bg-fuchsia-500 w-full hover:bg-fuchsia-600 duration-150 ease-in-out text-white font-semibold py-2 px-4 rounded"
+                        disabled={props.timerRunning}
+                        className="bg-fuchsia-500 disabled:bg-gray-500 w-full hover:bg-fuchsia-600 duration-150 ease-in-out text-white font-semibold py-2 px-4 rounded"
                       >
                         Submit
                       </button>

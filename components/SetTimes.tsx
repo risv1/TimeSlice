@@ -12,7 +12,7 @@ import TimerForm from "./TimerForm";
 import ViewSessions from "./ViewSessions";
 import { useSession } from "layouts/SessionContext";
 
-const SetTimes = () => {
+const SetTimes = (props: {timerRunning: boolean}) => {
   const [tempTimes, setTempTimes] = useState({
     timer: 20,
     sbreak: 3,
@@ -77,6 +77,7 @@ const SetTimes = () => {
               {seeForm ? (
                 <div className="w-full h-full">
                   <TimerForm
+                  timerRunning={props.timerRunning}
                     onHandleChange={handleChange}
                     onHandleSubmit={handleSubmit}
                     thisLbreakRef={lbreakRef}

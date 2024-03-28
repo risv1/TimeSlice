@@ -201,7 +201,7 @@ const Home = () => {
           />
         </div>
         <div className="w-full bg-slate-900 flex justify-center">
-          <SetTimes />
+          <SetTimes timerRunning={timerRunning} />
         </div>
       </div>
     </div>
