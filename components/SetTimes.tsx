@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTime } from "layouts/TimeContext";
 import TimerForm from "./TimerForm";
 import ViewSessions from "./ViewSessions";
+import { useSession } from "layouts/SessionContext";
 
 const SetTimes = () => {
   const [tempTimes, setTempTimes] = useState({
@@ -19,6 +20,7 @@ const SetTimes = () => {
   });
   const [seeForm, setSeeForm] = useState(true);
   const { updateTimes } = useTime();
+  const { clearSessions } = useSession()
 
   const timeRef = useRef<HTMLInputElement>(null);
   const sbreakRef = useRef<HTMLInputElement>(null);
@@ -85,7 +87,7 @@ const SetTimes = () => {
                 </div>
               ) : (
                 <div className="w-full h-full">
-                  <ViewSessions />
+                  <ViewSessions clearSession={clearSessions} />
                 </div>
               )}
             </div>

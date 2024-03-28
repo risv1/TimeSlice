@@ -60,7 +60,7 @@ const Home = () => {
 
   useEffect(() => {
     loadSessions();
-  }, []);
+  }, [sessions]);
 
   useEffect(() => {
     const newMinutes = Math.floor(totalSeconds / 60);
@@ -122,7 +122,7 @@ const Home = () => {
   const resetTimer = () => {
     const remainingSeconds = totalSeconds;
     const sessionData = {
-      startTime: new Date().toISOString(),
+      startTime: new Date().toISOString().toLocaleString(),
       duration: activeTime * 60 - remainingSeconds,
       status: "Incomplete"
     };
@@ -152,7 +152,7 @@ const Home = () => {
 
   const saveSession = () => {
     const sessionData = {
-      startTime: new Date().toISOString(),
+      startTime: new Date().toISOString().toLocaleString(),
       duration: activeTime * 60, 
       status: "Complete",
     };

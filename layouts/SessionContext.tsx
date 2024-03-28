@@ -29,6 +29,7 @@ export const SessionProvider = (props: {children: ReactNode}) => {
 
     const clearSessions = () => {
         setSessions([]);
+        localStorage.removeItem("sessions")
     };
 
     return (
