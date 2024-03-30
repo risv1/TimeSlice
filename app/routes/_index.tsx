@@ -131,11 +131,12 @@ const Home = () => {
       addSession(sessionData);
       const updatedSessions = [...sessions, sessionData];
       localStorage.setItem("sessions", JSON.stringify(updatedSessions));
-  
+      
       setMinutes(activeTime);
       setSeconds(0);
       setTotalSeconds(minutes * 60 + seconds);
       setTimerRunning(false);
+      handleStopPlaying()
       console.log("reset", minutes, seconds, totalSeconds);
       toast("Session saved!")
     }else{

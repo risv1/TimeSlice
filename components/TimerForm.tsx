@@ -17,6 +17,23 @@ type TimerFormProps = {
 
 
 const TimerForm: FC<TimerFormProps> = (props: TimerFormProps) => {
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    let numericValue = parseInt(value, 10);
+    if (isNaN(numericValue) || numericValue < 1) {
+        numericValue = 1;
+    }
+    props.onHandleChange({
+        ...e,
+        target: {
+            ...e.target,
+            name,
+            value: numericValue.toString(),
+        },
+    });
+};
+
     return (
         <>
             <div className="text-fuchsia-500 mb-4 font-normal text-xl tracking-widest pt-2">
@@ -32,9 +49,10 @@ const TimerForm: FC<TimerFormProps> = (props: TimerFormProps) => {
                         type="number"
                         id="timer"
                         name="timer"
+                        min={1}
                         className="border ml-12 rounded px-2 py-1 bg-gray-300 text-black"
                         ref={props.thisTimeRef}
-                        onChange={props.onHandleChange}
+                        onChange={handleChange}
                         value={props.thisTempTimes.timer}
                       />
                     </div>
@@ -46,9 +64,10 @@ const TimerForm: FC<TimerFormProps> = (props: TimerFormProps) => {
                         type="number"
                         id="sbreak"
                         name="sbreak"
+                        min={1}
                         className="border rounded px-2 py-1 bg-gray-300 text-black"
                         ref={props.thisSbreakRef}
-                        onChange={props.onHandleChange}
+                        onChange={handleChange}
                         value={props.thisTempTimes.sbreak}
                       />
                     </div>
@@ -60,9 +79,10 @@ const TimerForm: FC<TimerFormProps> = (props: TimerFormProps) => {
                         type="number"
                         id="lbreak"
                         name="lbreak"
+                        min={1}
                         className="border ml-1 rounded px-2 py-1 bg-gray-300 text-black"
                         ref={props.thisLbreakRef}
-                        onChange={props.onHandleChange}
+                        onChange={handleChange}
                         value={props.thisTempTimes.lbreak}
                       />
                     </div>
